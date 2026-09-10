@@ -262,7 +262,20 @@ const server = createServer(async (req, res) => {
   if (url.pathname === "/") {
     if (!authorized(req, url)) {
       res.writeHead(401, { "content-type": "text/plain; charset=utf-8", "cache-control": "no-store" });
-      res.end("Append ?key=<console token> to reach this page.\n");
+      // Spell out which token this is: it is NOT the board's admin_token, and
+      // reaching for that one is the obvious mistake.
+      res.end(
+        [
+          "This console needs its own key.",
+          "",
+          "  Open:  <this url>/?key=<CONSOLE_TOKEN>",
+          "",
+          "CONSOLE_TOKEN is a separate value from the audience board's",
+          "admin_token -- the board's token will not work here. On Railway it",
+          "is the CONSOLE_TOKEN variable on this service.",
+          "",
+        ].join("\n"),
+      );
       return;
     }
     const html = await readFile(join(HERE, "index.html"), "utf8");

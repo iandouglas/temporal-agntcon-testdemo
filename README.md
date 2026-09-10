@@ -74,6 +74,13 @@ from a phone or a second machine without running anything locally:
 
     https://test-demo-production-bdde.up.railway.app/?key=<CONSOLE_TOKEN>
 
+`CONSOLE_TOKEN` is **not** the board's `admin_token` — they are separate
+values and the board's will return 401 here. Read it off the Railway service:
+
+```bash
+railway variables --service test-demo --kv | grep CONSOLE_TOKEN
+```
+
 It runs with `BIND_HOST=::` and a `CONSOLE_TOKEN`, so the bare URL returns 401
 and every API route is gated too. The token is a Railway variable and is not in
 this repo.
