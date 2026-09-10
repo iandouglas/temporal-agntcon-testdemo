@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rehearsal Console</title>
+<style>
+  :root {
+    --maroon: #3b0d14;
+    --maroon-deep: #260810;
+    --amber: #e8a33d;
+    --amber-bright: #f7c266;
+    --cream: #f3e7d8;
+    --hairline: rgba(255, 255, 255, 0.12);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100dvh;
+    background: var(--maroon);
+    color: var(--cream);
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    display: flex;
+    justify-content: center;
+    padding: 28px 18px 48px;
+  }
+  main { width: 100%; max-width: 560px; }
+  h1 {
+    margin: 0 0 2px;
+    font-size: 13px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    opacity: 0.9;
+  }
+  .sub { margin: 0 0 22px; font-size: 12px; color: rgba(243, 231, 216, 0.5); }
+
+  /* --- the one button --- */
+  #go {
+    appearance: none;
+    width: 100%;
+    padding: 30px 20px;
+    border-radius: 18px;
+    border: 2px solid var(--hairline);
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--cream);
+    font: inherit;
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    cursor: pointer;
+    transition: background 160ms ease, border-color 160ms ease, opacity 160ms ease;
+  }
+  #go[data-mode="start"] {
+    background: linear-gradient(180deg, rgba(232, 163, 61, 0.28), rgba(232, 163, 61, 0.14));
+    border-color: rgba(232, 163, 61, 0.75);
+    color: #fff;
+    text-shadow: 0 0 12px rgba(255, 255, 255, 0.35);
+  }
+  #go[data-mode="stop"] {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.04));
+    border-color: rgba(255, 255, 255, 0.4);
+  }
+  #go:disabled { opacity: 0.45; cursor: default; }
+
+  .hint { margin: 10px 2px 24px; font-size: 12px; color: rgba(243, 231, 216, 0.55); min-height: 16px; }
+
+  /* --- board url --- */
+  .urlbox {
+    display: flex; gap: 8px; align-items: center;
+    padding: 12px 14px; margin-bottom: 20px;
+    border: 1px solid var(--hairline); border-radius: 12px;
+    background: rgba(0, 0, 0, 0.2);
+  }
+  .urlbox a {
+    flex: 1; min-width: 0;
+    color: var(--amber-bright);
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 12px;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+
+  /* --- readout --- */
+  .stats { display: flex; gap: 10px; margin-bottom: 14px; }
+  .stat { flex: 1; padding: 10px 12px; border: 1px solid var(--hairline); border-radius: 12px; background: rgba(255,255,255,0.04); }
+  .stat-k { font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(243,231,216,0.5); }
+  .stat-v { font-size: 22px; font-weight: 700; color: var(--amber-bright); font-variant-numeric: tabular-nums; }
+
+  ul { list-style: none; margin: 0 0 18px; padding: 0; }
+  li {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 12px; margin-bottom: 6px;
+    border: 1px solid var(--hairline); border-radius: 10px;
+    background: rgba(255, 255, 255, 0.03);
+    font-size: 13px;
+  }
+  li .name { flex: 1; letter-spacing: 0.06em; text-transform: uppercase; font-weight: 600; }
+  li .taps { font-size: 11px; color: rgba(243,231,216,0.45); font-variant-numeric: tabular-nums; }
+  .pill { font-size: 11px; font-weight: 800; letter-spacing: 0.1em; padding: 3px 9px; border-radius: 999px; }
+  .pill[data-on="true"]  { background: var(--amber); color: #1a0508; }
+  .pill[data-on="false"] { background: rgba(255,255,255,0.14); color: rgba(243,231,216,0.75); }
+
+  .row { display: flex; gap: 8px; }
+  .btn {
+    appearance: none; flex: 1;
+    padding: 11px; border-radius: 10px;
+    border: 1px solid var(--hairline);
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--cream); font: inherit; font-size: 12px; font-weight: 700;
+    letter-spacing: 0.1em; cursor: pointer;
+  }
+  .btn:disabled { opacity: 0.4; cursor: default; }
+  .warn {
+    margin: 16px 0 0; padding: 11px 13px;
+    border: 1px solid rgba(255,154,138,0.45); border-radius: 10px;
+    background: rgba(255,154,138,0.1); color: #ffc4ba;
+    font-size: 12px; line-height: 1.5;
+  }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Rehearsal Console</h1>
+  <p class="sub">Open the board in as many browsers as you like, then press start.</p>
+
+  <div class="urlbox">
+    <a id="boardLink" href="__AUDIENCE_URL__" target="_blank" rel="noreferrer">__AUDIENCE_URL__</a>
+    <button class="btn" id="copy" style="flex:0 0 auto;padding:7px 12px">COPY</button>
+  </div>
+
+  <button id="go" disabled>CONNECTING…</button>
+  <p class="hint" id="hint"></p>
+
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-k">Browsers on the board</div>
+      <div class="stat-v" id="conns">—</div>
+    </div>
+    <div class="stat">
+      <div class="stat-k">Total taps</div>
+      <div class="stat-v" id="taps">—</div>
+    </div>
+  </div>
+
+  <ul id="switches"></ul>
+
+  <div class="row">
+    <button class="btn" id="allOn">ALL ON</button>
+    <button class="btn" id="allOff">ALL OFF</button>
+    <button class="btn" id="reset">RESET COUNTERS</button>
+  </div>
+
+  <p class="warn" id="err" hidden></p>
+</main>
+
+<script>
+  const go = document.getElementById("go");
+  const hint = document.getElementById("hint");
+  const connsEl = document.getElementById("conns");
+  const tapsEl = document.getElementById("taps");
+  const list = document.getElementById("switches");
+  const err = document.getElementById("err");
+  let armed = false;
+  let linked = false;
+
+  document.getElementById("copy").addEventListener("click", async () => {
+    try {
+      await navigator.clipboard.writeText(document.getElementById("boardLink").href);
+      const b = document.getElementById("copy");
+      b.textContent = "COPIED";
+      setTimeout(() => { b.textContent = "COPY"; }, 1200);
+    } catch { /* clipboard blocked; the link is right there */ }
+  });
+
+  function post(path) {
+    return fetch(path, { method: "POST" }).catch(() => {});
+  }
+
+  go.addEventListener("click", () => {
+    go.disabled = true;
+    post(`/api/arm?v=${armed ? 0 : 1}`);
+  });
+  document.getElementById("allOn").addEventListener("click", () => post("/api/all?v=1"));
+  document.getElementById("allOff").addEventListener("click", () => post("/api/all?v=0"));
+  document.getElementById("reset").addEventListener("click", () => post("/api/reset"));
+
+  function render(v) {
+    linked = v.linked;
+    armed = v.armed;
+
+    go.disabled = !linked;
+    if (!linked) {
+      go.dataset.mode = "";
+      go.textContent = "RECONNECTING…";
+      hint.textContent = "Lost the control socket to the board.";
+    } else if (armed) {
+      go.dataset.mode = "stop";
+      go.textContent = "STOP THE DEMO";
+      hint.textContent = "The floor is open — every switch is live on every browser.";
+    } else {
+      go.dataset.mode = "start";
+      go.textContent = "START THE DEMO";
+      hint.textContent = "The board is locked. Switches show but do nothing.";
+    }
+
+    connsEl.textContent = linked ? v.audience : "—";
+    const total = Object.values(v.taps || {}).reduce((a, b) => a + b, 0);
+    tapsEl.textContent = linked ? total : "—";
+
+    const services = v.services && v.services.length
+      ? v.services
+      : Object.keys(v.state || {}).map((id) => ({ id, name: id }));
+
+    list.replaceChildren(...services.map((s) => {
+      const on = Boolean((v.state || {})[s.id]);
+      const li = document.createElement("li");
+      const name = document.createElement("span");
+      name.className = "name";
+      name.textContent = s.name;
+      const taps = document.createElement("span");
+      taps.className = "taps";
+      taps.textContent = `${(v.taps || {})[s.id] ?? 0} taps`;
+      const pill = document.createElement("span");
+      pill.className = "pill";
+      pill.dataset.on = String(on);
+      pill.textContent = on ? "ON" : "OFF";
+      li.append(name, taps, pill);
+      return li;
+    }));
+
+    const problems = [];
+    if (v.error) problems.push(v.error);
+    if (v.bus && v.bus.healthy === false) problems.push("The board reports Redis DEGRADED.");
+    err.hidden = problems.length === 0;
+    err.textContent = problems.join(" ");
+  }
+
+  const es = new EventSource("/events");
+  es.onmessage = (e) => { try { render(JSON.parse(e.data)); } catch {} };
+  es.onerror = () => {
+    go.disabled = true;
+    go.textContent = "CONSOLE OFFLINE";
+    hint.textContent = "Lost the connection to the local console process.";
+  };
+</script>
+</body>
+</html>

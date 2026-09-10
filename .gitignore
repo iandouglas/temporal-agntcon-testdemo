@@ -1,0 +1,4 @@
+# Holds the audience site's admin_token and the console token.
+.env
+node_modules/
+.DS_Store
