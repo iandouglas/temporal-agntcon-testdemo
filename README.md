@@ -70,8 +70,13 @@ HTML for both.
 ## Deployed copy
 
 There is also a Railway deployment of this console, so you can drive the board
-from a phone or a second machine without running anything locally. It has
-`BIND_HOST=::` and a `CONSOLE_TOKEN`, and its URL only works with `?key=`.
+from a phone or a second machine without running anything locally:
+
+    https://test-demo-production-bdde.up.railway.app/?key=<CONSOLE_TOKEN>
+
+It runs with `BIND_HOST=::` and a `CONSOLE_TOKEN`, so the bare URL returns 401
+and every API route is gated too. The token is a Railway variable and is not in
+this repo.
 
 Prefer the local copy when you are at your laptop: it is one less public
 surface, and it cannot be reached by anyone else at all.
