@@ -95,7 +95,19 @@ surface, and it cannot be reached by anyone else at all.
 - Binds `127.0.0.1` only — it is a local tool, not something to expose.
 - The console reconnects on its own if the board redeploys under it.
 - If the board's Redis goes degraded, a warning appears at the bottom.
-- **ALL ON also flips the MCP switch**, which is currently cosmetic: the board
-  POSTs `{mcp_url}/on`, the MCP server has no such route, and the tap 404s
-  (open item 2 in INTEGRATION-NOTES.md). The switch will read ON while nothing
-  was actually told to the MCP server. The four API switches are real.
+- **ALL ON also flips the MCP switch.** That is only real when the board has
+  `mcp_admin_token` set, so it talks to the MCP server's `/admin/control`.
+  Without it the board falls back to `{mcp_url}/on`, which the MCP server does
+  not have, and the switch reads ON while nothing changed.
+
+## Part of the AgntCon / MCPCon 2026 Demo
+
+This is one piece of a larger demo. Start at
+[temporal-agntcon-devnotes](https://github.com/iandouglas/temporal-agntcon-devnotes)
+for how the pieces fit together, and
+[RAILWAY.md](https://github.com/iandouglas/temporal-agntcon-devnotes/blob/main/RAILWAY.md)
+to deploy them.
+
+## License
+
+[MIT](LICENSE)
