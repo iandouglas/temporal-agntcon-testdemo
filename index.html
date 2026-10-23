@@ -95,7 +95,12 @@
   }
   li .name { flex: 1; letter-spacing: 0.06em; text-transform: uppercase; font-weight: 600; }
   li .taps { font-size: 11px; color: rgba(243,231,216,0.45); font-variant-numeric: tabular-nums; }
-  .pill { font-size: 11px; font-weight: 800; letter-spacing: 0.1em; padding: 3px 9px; border-radius: 999px; }
+  .pill {
+    appearance: none; border: 0; font: inherit;
+    font-size: 11px; font-weight: 800; letter-spacing: 0.1em;
+    padding: 6px 12px; border-radius: 999px; cursor: pointer;
+  }
+  .pill:disabled { opacity: 0.45; cursor: default; }
   .pill[data-on="true"]  { background: var(--amber); color: #1a0508; }
   .pill[data-on="false"] { background: rgba(255,255,255,0.14); color: rgba(243,231,216,0.75); }
 
@@ -220,10 +225,20 @@
       const taps = document.createElement("span");
       taps.className = "taps";
       taps.textContent = `${(v.taps || {})[s.id] ?? 0} taps`;
-      const pill = document.createElement("span");
+      // Tapping the pill flips just this one switch. The new state arrives
+      // over the socket like any other change, so the pill only changes once
+      // the board has actually moved.
+      const pill = document.createElement("button");
       pill.className = "pill";
       pill.dataset.on = String(on);
       pill.textContent = on ? "ON" : "OFF";
+      pill.title = `Turn ${s.name} ${on ? "off" : "on"}`;
+      pill.setAttribute("aria-label", pill.title);
+      pill.disabled = !linked;
+      pill.addEventListener("click", () => {
+        pill.disabled = true;
+        post(`/api/force?id=${encodeURIComponent(s.id)}&v=${on ? 0 : 1}`);
+      });
       li.append(name, taps, pill);
       return li;
     }));

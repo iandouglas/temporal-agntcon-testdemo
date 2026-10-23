@@ -64,6 +64,7 @@ HTML for both.
 | Button | Effect |
 |---|---|
 | START / STOP THE DEMO | Opens or closes the floor for the whole room (`arm`). The label follows the board's real state, so it stays correct even if you also use `/control`. |
+| ON / OFF pill on a service | Flips just that one service, the same way ALL ON / ALL OFF does. The pill changes once the board confirms the move. |
 | ALL ON / ALL OFF | Forces every service to that position. This **drives the services**, firing a real POST each, so it is a true reset rather than a cosmetic one. |
 | RESET COUNTERS | Zeroes tap counts and last-call lines. Leaves switch positions alone. |
 

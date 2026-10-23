@@ -335,6 +335,20 @@ const server = createServer(async (req, res) => {
     return;
   }
 
+  if (req.method === "POST" && url.pathname === "/api/force") {
+    // One switch, same message ALL ON/OFF sends per service. Only ids the
+    // board told us about, so a stray id can't invent a switch on the board.
+    const id = url.searchParams.get("id") ?? "";
+    const v = url.searchParams.get("v") === "1";
+    const known = view.services.some((s) => s.id === id) || id in view.state;
+    if (!known) {
+      json(res, 404, { error: `unknown switch: ${id}` });
+      return;
+    }
+    json(res, send({ t: "force", id, v }) ? 200 : 503, { ok: view.linked, id, v });
+    return;
+  }
+
   if (req.method === "POST" && url.pathname === "/api/reset") {
     json(res, send({ t: "reset-counters" }) ? 200 : 503, { ok: view.linked });
     return;
