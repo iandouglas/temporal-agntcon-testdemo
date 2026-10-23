@@ -1,4 +1,4 @@
-# Rehearsal console
+# Control console
 
 A local one-button page for testing the deployed audience board across several
 browsers at once.
@@ -43,7 +43,7 @@ HTML for both.
 ## Testing across browsers
 
 1. Start the console, leave it open in one window.
-2. Open the board URL (shown at the top of the console, with a copy button) in
+2. Open the board URL (your `AUDIENCE_URL`) in
    Chrome, Safari, Firefox, a private window, your phone — as many as you like.
    Each one should show the switches greyed out and *waiting for the demo to
    start*.
@@ -64,6 +64,7 @@ HTML for both.
 | Button | Effect |
 |---|---|
 | START / STOP THE DEMO | Opens or closes the floor for the whole room (`arm`). The label follows the board's real state, so it stays correct even if you also use `/control`. |
+| ON / OFF pill on a service | Flips just that one service, the same way ALL ON / ALL OFF does. The pill changes once the board confirms the move. |
 | ALL ON / ALL OFF | Forces every service to that position. This **drives the services**, firing a real POST each, so it is a true reset rather than a cosmetic one. |
 | RESET COUNTERS | Zeroes tap counts and last-call lines. Leaves switch positions alone. |
 

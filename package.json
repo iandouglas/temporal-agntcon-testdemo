@@ -2,7 +2,7 @@
   "name": "test-demo",
   "version": "1.0.0",
   "private": true,
-  "description": "One-button rehearsal console for the audience switchboard.",
+  "description": "One-button control console for the audience switchboard.",
   "type": "module",
   "engines": {
     "node": ">=22.0.0"
