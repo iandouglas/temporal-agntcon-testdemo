@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Rehearsal Console</title>
+<title>Control Console</title>
 <style>
   :root {
     --maroon: #3b0d14;
@@ -64,20 +64,6 @@
 
   .hint { margin: 10px 2px 24px; font-size: 12px; color: rgba(243, 231, 216, 0.55); min-height: 16px; }
 
-  /* --- board url --- */
-  .urlbox {
-    display: flex; gap: 8px; align-items: center;
-    padding: 12px 14px; margin-bottom: 20px;
-    border: 1px solid var(--hairline); border-radius: 12px;
-    background: rgba(0, 0, 0, 0.2);
-  }
-  .urlbox a {
-    flex: 1; min-width: 0;
-    color: var(--amber-bright);
-    font-family: ui-monospace, "SF Mono", Menlo, monospace;
-    font-size: 12px;
-    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-  }
 
   /* --- readout --- */
   .stats { display: flex; gap: 10px; margin-bottom: 14px; }
@@ -125,13 +111,8 @@
 </head>
 <body>
 <main>
-  <h1>Rehearsal Console</h1>
+  <h1>Control Console</h1>
   <p class="sub">Open the board in as many browsers as you like, then press start.</p>
-
-  <div class="urlbox">
-    <a id="boardLink" href="__AUDIENCE_URL__" target="_blank" rel="noreferrer">__AUDIENCE_URL__</a>
-    <button class="btn" id="copy" style="flex:0 0 auto;padding:7px 12px">COPY</button>
-  </div>
 
   <button id="go" disabled>CONNECTING…</button>
   <p class="hint" id="hint"></p>
@@ -167,15 +148,6 @@
   const err = document.getElementById("err");
   let armed = false;
   let linked = false;
-
-  document.getElementById("copy").addEventListener("click", async () => {
-    try {
-      await navigator.clipboard.writeText(document.getElementById("boardLink").href);
-      const b = document.getElementById("copy");
-      b.textContent = "COPIED";
-      setTimeout(() => { b.textContent = "COPY"; }, 1200);
-    } catch { /* clipboard blocked; the link is right there */ }
-  });
 
   function post(path) {
     return fetch(path, { method: "POST" }).catch(() => {});

@@ -1,4 +1,4 @@
-# Rehearsal console
+# Control console
 
 A local one-button page for testing the deployed audience board across several
 browsers at once.
@@ -43,7 +43,7 @@ HTML for both.
 ## Testing across browsers
 
 1. Start the console, leave it open in one window.
-2. Open the board URL (shown at the top of the console, with a copy button) in
+2. Open the board URL (your `AUDIENCE_URL`) in
    Chrome, Safari, Firefox, a private window, your phone — as many as you like.
    Each one should show the switches greyed out and *waiting for the demo to
    start*.

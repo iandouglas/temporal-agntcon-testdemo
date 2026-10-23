@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * One-button rehearsal console for the audience site.
+ * One-button control console for the audience site.
  *
  * The board ships locked, and unlocking it normally means loading /control with
  * the admin token in the URL -- awkward when you are juggling several browser
@@ -287,8 +287,7 @@ const server = createServer(async (req, res) => {
         (LOOPBACK.has(BIND_HOST) ? "" : "; Secure");
     }
     res.writeHead(200, headers);
-    // replaceAll: the placeholder appears twice (href and link text).
-    res.end(html.replaceAll("__AUDIENCE_URL__", AUDIENCE_URL));
+    res.end(html);
     return;
   }
 
@@ -364,7 +363,7 @@ server.listen(PORT, BIND_HOST, () => {
   const where = LOOPBACK.has(BIND_HOST) ? `http://127.0.0.1:${PORT}` : `[${BIND_HOST}]:${PORT}`;
   const key = CONSOLE_TOKEN ? "/?key=<CONSOLE_TOKEN>" : "";
   console.log("");
-  console.log(`  rehearsal console : ${where}${key}`);
+  console.log(`  control console   : ${where}${key}`);
   console.log(`  driving the board : ${AUDIENCE_URL}`);
   console.log(`  console gate      : ${CONSOLE_TOKEN ? "token required" : "open (loopback only)"}`);
   console.log("");
